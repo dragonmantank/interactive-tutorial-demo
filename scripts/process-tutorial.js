@@ -144,7 +144,7 @@ async function generateDevContainer(name, config) {
     if (config.panels && config.panels.includes('browser')) {
         portsAttributes["8080"] = {
             "label": "My Project Preview",
-            "onAutoForward": "openPreview"
+            "onAutoForward": "notify"
         };
     }
 
