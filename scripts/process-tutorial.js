@@ -16,9 +16,9 @@ async function main() {
     const files = fs.readdirSync(UPLOADS_DIR).filter(f => f.endsWith('.zip'));
     
     if (files.length === 0) return console.log("No zip files to process.");
-    
+    console.log('files[0]: ',files[0])
     // Process the first found zip file
-    const zipFilename = files;
+    const zipFilename = files[0];
     const tutorialName = path.basename(zipFilename, '.zip').replace(/[^a-zA-Z0-9-_]/g, ''); // Sanitize name
     const targetDir = path.join(TUTORIALS_BASE, tutorialName);
     
@@ -35,6 +35,26 @@ async function main() {
     
     console.log("✅ Extraction complete.");
 
+    // Locate Project Root & Check package.json
+    // Sometimes zips contain a root folder (e.g. my-app/package.json) instead of files at root.
+    let projectRoot = targetDir;
+    
+    // Check if package.json exists at extraction root
+    if (!fs.existsSync(path.join(projectRoot, 'package.json'))) {
+        // If not, check if there is a single subdirectory containing it
+        const subdirs = fs.readdirSync(targetDir).filter(f => fs.statSync(path.join(targetDir, f)).isDirectory());
+        if (subdirs.length === 1) {
+            projectRoot = path.join(targetDir, subdirs);
+            console.log(`ℹ️  Found project in subdirectory: ${subdirs}`);
+        }
+    }
+
+    // Explicit Check
+    if (!fs.existsSync(path.join(projectRoot, 'package.json'))) {
+        console.error("❌ Error: package.json not found. Is this a valid Node.js project?");
+        // Exit with error to fail the GitHub Action
+        process.exit(1);
+    }
     // 3. Load Tutorial Configuration
     const configPath = path.join(targetDir, 'tutorial-config.json');
     if (!fs.existsSync(configPath)) {
