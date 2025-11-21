@@ -34,4 +34,7 @@ jobs:
           commit_message: "🤖 Auto-generate tutorial environment [skip ci]: ${{ github.event.head_commit.message }}"
           branch: ${{ github.ref }}
           # Ensure we track the new folders
-          file_pattern: 'tutorials/.devcontainer/ uploads/'
+          file_pattern: |
+            tutorials/
+            .devcontainer/
+            uploads/
