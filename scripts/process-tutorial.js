@@ -67,11 +67,26 @@ async function main() {
     // We add http-server and live-server to package.json here.
     // This allows 'npm install' to handle them efficiently in the container.
     const packageJsonPath = path.join(targetDir, 'package.json');
+
+    // We construct the start command based on whether the browser panel is needed
+    let startCommand = "http-server steps -p 3000 --cors -c-1 &";
+    if (tutorialConfig.panels && tutorialConfig.panels.includes('browser')) {
+        // We add the public port command here inside the package.json script
+        // Note: We use 'wait' at the end to keep the process alive
+        startCommand += " gh codespace ports visibility 8080:public -c $CODESPACE_NAME && live-server --port=8080 --no-browser & wait";
+    } else {
+        startCommand += " wait";
+    }
+    
     if (fs.existsSync(packageJsonPath)) {
         const pkg = fs.readJsonSync(packageJsonPath);
         pkg.devDependencies = pkg.devDependencies || {};
         pkg.devDependencies["http-server"] = "^14.1.1";
         pkg.devDependencies["live-server"] = "^1.2.2";
+
+        pkg.scripts = pkg.scripts || {};
+        pkg.scripts["start"] = startCommand;
+        
         fs.writeJsonSync(packageJsonPath, pkg, { spaces: 2 });
         console.log("📦 Injected dev dependencies into package.json");
     }
@@ -165,12 +180,12 @@ async function generateDevContainer(name, config) {
     // 2. Serve the current directory on port 8080 (if browser requested)
     // We use 'concurrently' or simple background '&' operators.
     
-    let attachCommand = "nohup npx http-server steps -p 3000 --cors -c-1 > /dev/null 2>&1 &";
+    // let attachCommand = "nohup npx http-server steps -p 3000 --cors -c-1 > /dev/null 2>&1 &";
     
-    if (config.panels && config.panels.includes('browser')) {
-        // live-server provides hot reload for the user's index.html
-        attachCommand += " nohup npx live-server --port=8080 --no-browser > /dev/null 2>&1 &";
-    }
+    // if (config.panels && config.panels.includes('browser')) {
+    //     // live-server provides hot reload for the user's index.html
+    //     attachCommand += " nohup npx live-server --port=8080 --no-browser > /dev/null 2>&1 &";
+    // }
 
     // -- The DevContainer Configuration Object --
     const devContainerConfig = {
@@ -188,11 +203,9 @@ async function generateDevContainer(name, config) {
         "postCreateCommand": "",
         
         // Run every time the user connects/attaches
-        "postAttachCommand": attachCommand,
+        "postAttachCommand": "npm start",
 
-        "features": {
-            "ghcr.io/devcontainers/features/common-utils:2": {}
-        },
+        "features": {},
         
         "customizations": {
             "vscode": {
