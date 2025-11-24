@@ -196,13 +196,8 @@ async function generateDevContainer(name, config) {
         
         "customizations": {
             "vscode": {
-                "extensions": [
-                    "ritwickdey.liveserver", 
-                    "astro-build.astro-vscode"
-                ],
+                "extensions": [],
                 "settings": {
-                    "liveServer.settings.port": 8080,
-                    "liveServer.settings.root": "/",
                     "editor.formatOnSave": true
                 }
             },
