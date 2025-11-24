@@ -16,7 +16,7 @@ async function main() {
     const files = fs.readdirSync(UPLOADS_DIR).filter(f => f.endsWith('.zip'));
     
     if (files.length === 0) return console.log("No zip files to process.");
-    console.log('files[0]: ',files[0])
+    // console.log('files[0]: ',files[0])
     // Process the first found zip file
     const zipFilename = files[0];
     const tutorialName = path.basename(zipFilename, '.zip').replace(/[^a-zA-Z0-9-_]/g, ''); // Sanitize name
@@ -63,6 +63,18 @@ async function main() {
         process.exit(1);
     }
     const tutorialConfig = fs.readJsonSync(configPath);
+
+    // We add http-server and live-server to package.json here.
+    // This allows 'npm install' to handle them efficiently in the container.
+    const packageJsonPath = path.join(targetDir, 'package.json');
+    if (fs.existsSync(packageJsonPath)) {
+        const pkg = fs.readJsonSync(packageJsonPath);
+        pkg.devDependencies = pkg.devDependencies || {};
+        pkg.devDependencies["http-server"] = "^14.1.1";
+        pkg.devDependencies["live-server"] = "^1.2.2";
+        fs.writeJsonSync(packageJsonPath, pkg, { spaces: 2 });
+        console.log("📦 Injected dev dependencies into package.json");
+    }
 
     // 4. Build Astro Starlight Project
     console.log("🔨 Building Astro Starlight project...");
@@ -163,11 +175,21 @@ async function generateDevContainer(name, config) {
     // -- The DevContainer Configuration Object --
     const devContainerConfig = {
         "name": `Tutorial: ${name}`,
-        "image": "mcr.microsoft.com/devcontainers/typescript-node:18",
+        "image": "mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm",
         
         // Isolate the user in the specific tutorial folder
         "workspaceFolder": `/workspaces/${REPO_NAME}/tutorials/${name}`,
+
+        "waitFor": "onCreateCommand",
+
+        "updateContentCommand": "npm install",
+
+        // Run once when the container is created
+        "postCreateCommand": "",
         
+        // Run every time the user connects/attaches
+        "postAttachCommand": attachCommand,
+
         "features": {
             "ghcr.io/devcontainers/features/common-utils:2": {}
         },
@@ -191,11 +213,6 @@ async function generateDevContainer(name, config) {
         
         "portsAttributes": portsAttributes,
         
-        // Run once when the container is created
-        "postCreateCommand": "npm install -g http-server live-server",
-        
-        // Run every time the user connects/attaches
-        "postAttachCommand": attachCommand
     };
 
     // -- Terminal Panel Logic --
