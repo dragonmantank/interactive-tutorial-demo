@@ -73,7 +73,12 @@ async function main() {
     if (tutorialConfig.panels && tutorialConfig.panels.includes('browser')) {
         // We add the public port command here inside the package.json script
         // Note: We use 'wait' at the end to keep the process alive
-        startCommand += " live-server --port=8080 --no-browser & wait";
+        startCommand += " live-server --port=8080 --no-browser &";
+        // 2. Add a 'sleep' so this message prints AFTER the server startup logs
+        // 3. Print the clickable URL using the $CODESPACE_NAME variable
+        // Note: We escape the $ so it is written literally into package.json
+        const linkMsg = "echo \"\\n\\n--------------------------------------------------\\nYOUR APP IS READY:\\nhttps://\${CODESPACE_NAME}-8080.app.github.dev\\n--------------------------------------------------\\n\\n\"";
+        startCommand += ` sleep 3 && ${linkMsg} & wait`;
     } else {
         startCommand += " wait";
     }
@@ -217,7 +222,7 @@ async function generateDevContainer(name, config) {
     if (config.panels && config.panels.includes('browser')) {
         portsAttributes["8080"] = {
             "label": "My Project Preview",
-            "onAutoForward": "openBrowser",
+            "onAutoForward": "notify",
             "visibility": "public"
         };
     }
