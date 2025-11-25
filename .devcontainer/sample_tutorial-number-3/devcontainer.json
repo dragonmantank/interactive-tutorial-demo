@@ -1,0 +1,36 @@
+{
+    "name": "Tutorial: sample_tutorial-number-3",
+    "image": "mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm",
+    "workspaceFolder": "/workspaces/interactive-tutorial-demo/tutorials/sample_tutorial-number-3",
+    "waitFor": "onCreateCommand",
+    "updateContentCommand": "npm install",
+    "postCreateCommand": "",
+    "postAttachCommand": "npm start",
+    "features": {},
+    "customizations": {
+        "vscode": {
+            "extensions": [],
+            "settings": {
+                "editor.formatOnSave": true
+            }
+        },
+        "codespaces": {
+            "openFiles": [
+                "index.html",
+                "styles.css",
+                "app.js"
+            ]
+        }
+    },
+    "portsAttributes": {
+        "3000": {
+            "label": "Tutorial Guide",
+            "onAutoForward": "openPreview"
+        },
+        "8080": {
+            "label": "My Project Preview",
+            "onAutoForward": "notify",
+            "visibility": "public"
+        }
+    }
+}
