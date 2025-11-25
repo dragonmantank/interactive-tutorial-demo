@@ -69,11 +69,11 @@ async function main() {
     const packageJsonPath = path.join(targetDir, 'package.json');
 
     // We construct the start command based on whether the browser panel is needed
-    let startCommand = "http-server steps -p 3000 --cors -c-1 &";
+    let startCommand = "http-server steps -p 3000 --cors -c-1 > /dev/null 2>&1 &";
     if (tutorialConfig.panels && tutorialConfig.panels.includes('browser')) {
         // We add the public port command here inside the package.json script
         // Note: We use 'wait' at the end to keep the process alive
-        startCommand += " live-server --port=8080 --no-browser &";
+        startCommand += " live-server --port=8080 --no-browser > /dev/null 2>&1 &";
         // 2. Add a 'sleep' so this message prints AFTER the server startup logs
         // 3. Print the clickable URL using the $CODESPACE_NAME variable
         // Note: We escape the $ so it is written literally into package.json
