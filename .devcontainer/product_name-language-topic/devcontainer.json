@@ -1,0 +1,52 @@
+{
+    "name": "Tutorial: product_name-language-topic",
+    "image": "mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm",
+    "workspaceFolder": "/workspaces/interactive-tutorial-demo/tutorials/product_name-language-topic",
+    "waitFor": "onCreateCommand",
+    "updateContentCommand": "npm install",
+    "postCreateCommand": "",
+    "postAttachCommand": "npm start",
+    "features": {},
+    "customizations": {
+        "vscode": {
+            "extensions": [],
+            "settings": {
+                "editor.formatOnSave": true,
+                "files.exclude": {
+                    ".astro": true,
+                    "public": true,
+                    "node_modules": true,
+                    "vonage-toolbar": true,
+                    "src": true,
+                    "dist": true,
+                    "steps": true,
+                    ".devcontainer": true,
+                    ".vscode": true,
+                    "package.json": true,
+                    "package-lock.json": true,
+                    "tutorial-config.json": true,
+                    "tsconfig.json": true,
+                    "astro.config.mjs": true,
+                    ".git": true,
+                    "README.md": true,
+                    "markdoc.config.mjs": true,
+                    ".DS_Store": true
+                }
+            }
+        },
+        "codespaces": {
+            "openFiles": []
+        }
+    },
+    "portsAttributes": {
+        "3000": {
+            "label": "Tutorial Guide",
+            "onAutoForward": "openPreview"
+        },
+        "8080": {
+            "label": "My Project Preview",
+            "onAutoForward": "notify",
+            "visibility": "public"
+        }
+    }
+}
