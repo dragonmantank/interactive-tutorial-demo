@@ -35,7 +35,9 @@
             }
         },
         "codespaces": {
-            "openFiles": []
+            "openFiles": [
+                "index.html"
+            ]
         }
     },
     "portsAttributes": {

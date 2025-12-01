@@ -1,5 +1,7 @@
 {
-  "files": [],
+  "files": [
+    "index.html"
+  ],
   "panels": [
     "terminal",
     "browser"
